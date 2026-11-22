@@ -7,7 +7,7 @@ import android.media.projection.MediaProjection
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.DisplayMetrics
-import android.view.PixelFormat
+import android.graphics.PixelFormat
 import android.view.WindowManager
 
 class ScreenCapturer(

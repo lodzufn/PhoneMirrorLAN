@@ -16,9 +16,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.webSocket
-import io.ktor.utils.io.flush
 import io.ktor.utils.io.writeFully
-import io.ktor.utils.io.writeString
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.WebSocketSession
@@ -43,7 +41,7 @@ class WebServer(
 
     fun start(port: Int = 8080) {
         engine = embeddedServer(Netty, port = port, host = "0.0.0.0") {
-            install(WebSockets) { pingInterval = 20_000 }
+            install(WebSockets)
             routing {
                 get("/") {
                     call.respondText(indexHtml(), ContentType.Text.Html)
@@ -109,9 +107,9 @@ class WebServer(
                 contentType = ContentType.parse("multipart/x-mixed-replace; boundary=frame")
             ) {
                 frames.collect { jpeg ->
-                    writeString("--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpeg.size}\r\n\r\n")
+                    writeFully("--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpeg.size}\r\n\r\n".toByteArray())
                     writeFully(jpeg)
-                    writeString("\r\n")
+                    writeFully("\r\n".toByteArray())
                     flush()
                 }
             }
